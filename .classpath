@@ -14,5 +14,7 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry kind="lib" path="WebContent/api/poi-3.16.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Harshit/Desktop/JavaiTextPDFExamples/lib/itextpdf-5.0.6.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Harshit/Desktop/ppi/jars/jfreechart-1.0.19.jar"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

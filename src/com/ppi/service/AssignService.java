@@ -1,30 +1,55 @@
 package com.ppi.service;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Random;
-//import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-public class AssignService {
-	
-	static void shuffleArray(String[] ar)
-	  {
-	    
-	    Random rnd = new Random();
-	    for (int i = ar.length - 1; i > 0; i--)
-	    {
-	      int index = rnd.nextInt(i + 1);
-	     
-	      String a = ar[index];
-	      ar[index] = ar[i];
-	      ar[i] = a;
-	    }
-	  }
-	
-	public static void main(String[] args) 
-    {
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import com.ppi.model.Ppi;
+
+/**
+ * Servlet implementation class AssignService
+ */
+@WebServlet("/AssignService")
+public class AssignService extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public AssignService() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		//response.getWriter().append("Served at: ").append(request.getContextPath());
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		//doGet(request, response);
+		
+		
+		
 		Connection con=null;
         try
         {        	
@@ -32,16 +57,18 @@ public class AssignService {
                    con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ppi","root","root");
                    con.setAutoCommit(false);
                    PreparedStatement pstm = null;
-                   int a = 0,b = 0,c,d;
+                   List<Ppi> list=new ArrayList<Ppi>();
+                   int a = 0,b = 0,c,d,e=5;
                    String x = null,y = null;
                    
-                   String sql6 = "DELETE FROM ASSIGN";
-                   pstm = con.prepareStatement(sql6);
-                   pstm.execute();
+//                   String sql6 = "DELETE FROM ASSIGN";
+//                   pstm = con.prepareStatement(sql6);
+//                   pstm.execute();
 
-                  
-                   String sql = "Select count(*) from records";
+                   String sql = "Select count(*) from records where ppi_assigned=?";
+          
                    pstm=con.prepareStatement(sql);
+                   pstm.setInt(1, 0);
                    ResultSet rs= pstm.executeQuery();
                    
                    while(rs.next()){
@@ -67,34 +94,21 @@ public class AssignService {
                    
                    
                    String sql4 = "Select id from expert_login";
-        		   String sql5 = "Select rno from records";
+        		   String sql5 = "Select rno from records  where ppi_assigned=?";
         		   pstm=con.prepareStatement(sql4);
                    ResultSet rs3= pstm.executeQuery();
                    pstm=con.prepareStatement(sql5);
+                   pstm.setInt(1, 0);
                    ResultSet rs4= pstm.executeQuery();
-                   
-                   String arr[]=new String[a];
-                   int i=0;
-                   while(rs4.next()){
-                	   arr[i]=rs4.getString(1);
-                	   i++;
-                   }
-                   
-                   shuffleArray(arr);
-                   
-                   for (i = 0; i < arr.length; i++)
-                   {
-                     System.out.print(arr[i] + " ");
-                   }
-                   System.out.println();
+                  // String sql7 = "update records set ppi_assigned=? where rno=?";
  
 
                    int k=0;
                   
                    
-                	   for(i=0;i<b;i++){
-                    	   for(int j=0;j<c;j++){  
-                       //for(int k=0;k<a;k++){ 
+                	  
+                    	   for(int j=0;j<c;j++){   
+                    		   for(int i=0;i<b;i++){
                                
                                if(k!=a){
                             	   System.out.println("k : "+(k+1));  
@@ -102,56 +116,77 @@ public class AssignService {
                             	   x=rs3.getString(1);
                             	   System.out.println("x : "+x);
                             	   }
-                               //if(rs4.absolute(k+1)){
-                            	   y=arr[k];
-                            	   System.out.println("y : "+y);
-                               //}
+                            	   if(rs4.absolute(k+1)){
+                                	   y=rs4.getString(1);
+                                	   System.out.println("y : "+y);
+                                	   }
+                           		
+                      				Ppi p=new Ppi();
+                      				p.setExpert(x);
+                      				p.setRoll(y);
+                      				if((k+1)<=e){
+                      				p.setAssign(1);
+                      				}
+                      				else{
+                      					p.setAssign(0);
+                      				}
+                      				list.add(p);
                                }
                     		   k++;
-                    		   String sql3 = "insert into assign values(?,?)";
-                    		   pstm=con.prepareStatement(sql3);
-                    		   pstm.setString(1,x);
-                               pstm.setString(2,y);
-                               System.out.println(pstm.executeUpdate());
+                    		   
                     	 }  
 
                    }
                 	   
                 	   if(d!=0){
-int j;
+                         
                 	   
-                	   for(i=0,j=k;i<d && j<k+d;i++,j++){
-                		   
-                		   sql4 = "Select id from expert_login";
-//                		   sql5 = "select rno from records order by rno desc limit ?;";
-                		   pstm=con.prepareStatement(sql4);
-                           rs3= pstm.executeQuery();
-//                           pstm=con.prepareStatement(sql5);
-//                           pstm.setInt(1, d);
-//                           rs4= pstm.executeQuery();
+                	   for(int i=0,j=k;i<d && j<k+d;i++,j++){
+
                            
-                           System.out.println("k : "+(k+1));  
+                           System.out.println("k : "+(j+1));  
                            if(rs3.absolute(i+1)){               	   
                         	   x=rs3.getString(1);
                         	   System.out.println("x : "+x);
                            }
-                           if(rs4.absolute(i+1)){
-                        	   y=arr[j];
-                        	   System.out.println("y : "+y);
-                           }
+     
+                        	   if(rs4.absolute(j+1)){
+                            	   y=rs4.getString(1);
+                            	   System.out.println("y : "+y);
+                            	   }
+
+                        	   
+                        	   Ppi p=new Ppi();
+                 				p.setExpert(x);
+                 				p.setRoll(y);
+                 				if((j)<=e){
+                 				p.setAssign(1);
+                 				}
+                 				else{
+                 					p.setAssign(0);
+                 				}
+                 				list.add(p);
+                 				
                            
-                		  
-                		   String sql3 = "insert into assign values(?,?)";
-                		   pstm=con.prepareStatement(sql3);
-                		   pstm.setString(1,x);
-                           pstm.setString(2,y);
-                           System.out.println(pstm.executeUpdate());
-                		   
                 	   }
                 	   
             		   
            	   }
-                   
+                	   Iterator<Ppi> itr=list.iterator();
+
+                	    while(itr.hasNext())
+                	    {
+                	        Ppi p = itr.next();
+
+                	        System.out.print("expert:"+p.getExpert());
+                	        System.out.print("Stud:"+p.getRoll());
+                	        System.out.println("Assign:"+p.getAssign());
+                	        
+                	    }
+
+                	    HttpSession sess=request.getSession();  
+                        sess.setAttribute("list",list);
+                  
                    con.commit();
                    pstm.close();
                    } 
@@ -159,8 +194,10 @@ int j;
                    {
                        e.printStackTrace();
                    }
+        
+        
+       
             
-	
-    }
+	}
 
 }

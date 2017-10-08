@@ -1,6 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="java.sql.* "%>
+<%@ page import="java.util.*"%>
+<%@ page import="java.io.*" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
@@ -9,18 +13,18 @@
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>  
   <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
-<title>Pie Chart Demo</title>
-<style>
-img.a{
-margin-left:15%;
-}
-img.b{
-margin-left:31.7%;
-}
-
-</style>
+  
+  <style type="text/css">
+  span.a{
+  margin-left:10%;
+  color:green;
+  font-weight:bold;
+  font-sikariyeze:18px;
+  }</style>
+<title>Insert title here</title>
 </head>
-<body><nav class="navbar navbar-inverse">
+<body>
+ <nav class="navbar navbar-inverse">
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="#">PPI PORTAL</a>
@@ -55,14 +59,45 @@ margin-left:31.7%;
             </ul>
         </div>
         <!-- Sidebar ends --> 
+        
+<form method="post" action="../uploadDetails" >         
+        
+	<jsp:useBean id="RecordsDao" class="com.ppi.impl.RecordsIMPL"></jsp:useBean>
+<%
+		request.setAttribute("students", RecordsDao.getStudents());
 
-<!--        <h3>Analysis</h3> -->
-           <br> <img class="a" src="../ChartServlet" />
-           <br>
-           <br>
-           <br>
-           <img class="b" src="../PieChart" />
-           <br>
-           <br>
+        
+	%>
+
+ <div class="col-sm-2 col-lg-8">
+
+
+            <table class="table">
+                <thead>
+                    <tr class="info">
+                        <th> Expert Id</th>
+                        <th> Student Id</th>
+                        <th> PPI Assigned </th>
+                    </tr>
+            </thead>
+            <tbody>
+            <c:forEach items="${students}" var="student">
+
+				<tr class="info">
+					<td>${student.roll}</td>
+					<td>${student.name}</td>
+					<td><c:if test="${student.assign == 1}"> <input type="checkbox" name="checkbox" value="${student.roll}" checked></c:if>
+						<c:if test="${student.assign == 0}"> <input type="checkbox" name="checkbox" value="${student.roll}"></c:if>
+					</td>
+					
+				</tr>
+		</c:forEach>           
+            </tbody>
+            </table>
+            </div>
+            
+            <input type="submit" name="submit" value="SUBMIT">
+            
+            </form>
 </body>
 </html>
